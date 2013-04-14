@@ -54,14 +54,14 @@ def respond_in_plaintext(fn):
 
 
 @route('/ip', method='GET', apply=[respond_in_plaintext, catch_exceptions])
-def test():
+def ip():
     return '%s\n' % request.get('REMOTE_ADDR')
 
 
 
 @route('/', method='GET', apply=[respond_in_plaintext, catch_exceptions])
 def index():
-    return USAGE % (URL, ARG)
+    return USAGE % (ARG, URL)
 
 
 
