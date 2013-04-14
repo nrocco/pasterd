@@ -58,6 +58,10 @@ def ip():
     return '%s\n' % request.get('REMOTE_ADDR')
 
 
+@route('/robots.txt', method='GET', apply=[respond_in_plaintext])
+def robots():
+    return 'User-agent: *\nDisallow: /'
+
 
 @route('/', method='GET', apply=[respond_in_plaintext, catch_exceptions])
 def index():
