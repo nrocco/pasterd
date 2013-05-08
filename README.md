@@ -6,10 +6,17 @@ networks.
 
 All credit goes to https://github.com/rupa/sprunge
 
+`pasterd` is a simple http webservice just like paste bin.
+You can store snippets of text based content using HTTP POST request and share
+them with the rest of the world using plaing HTTP GET requests.
 
 
 installation
 ------------
+
+You only need to download, install and run `pasterd` on the server side.
+Typically you run `pasterd` like any other bottle.py app; on `127.0.0.1`
+behind a proxy server such as `nginx` or `apache`.
 
 You can install `pasterd` using pip
 
@@ -36,6 +43,9 @@ This will install a program `pasterd`
 
 usage
 -----
+
+After having installed `pasterd` on the server side from any client you can
+use e.g. `curl` to send GET and POST requests to `pasterd`.
 
 To get information on how to use `pasterd` do:
 
