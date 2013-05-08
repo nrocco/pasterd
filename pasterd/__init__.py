@@ -7,9 +7,9 @@ from bottle import route, run, response, request, install
 from bottle_sqlite import SQLitePlugin
 
 
-
+VERSION = '1.1'
 USAGE = '''
-pasterd.py                                          v 1.1
+pasterd                                             v %s
 
 NAME
     pasterd - command line paste bin utility
@@ -65,7 +65,7 @@ def robots():
 
 @route('/', method='GET', apply=[respond_in_plaintext, catch_exceptions])
 def index():
-    return USAGE % (ARG, URL)
+    return USAGE % (VERSION, ARG, URL)
 
 
 
@@ -105,13 +105,14 @@ def show_paste(db, paste_id):
 ##############################################################################
 #
 
-
-if '__main__' == __name__:
+def main():
     import sys
     import os
     from argparse import ArgumentParser
 
-    parser = ArgumentParser(description='Command line paste bin utility')
+    parser = ArgumentParser(prog='pasterd',
+                            description='Command line paste bin utility')
+    parser.add_argument('-V', '--version', action='version', version=VERSION)
     parser.add_argument('-b', '--bind', metavar='address:port',
                         default='0.0.0.0:8000', help='Inet socket to bind to')
     parser.add_argument('-u', '--base-url', metavar='http://address:port',
@@ -124,19 +125,28 @@ if '__main__' == __name__:
     host = parts[0]
     port = parts[1] if len(parts) > 1 else 8000
 
-    DBNAME = 'pastes.sqlite'
+    dbname = 'pastes.sqlite'
+
+    global URL
     URL = args.base_url or 'http://%s:%s' % (host, port)
+
+    global ARG
     ARG = 'p'
 
-    if not os.path.isfile(DBNAME):
+    if not os.path.isfile(dbname):
         print 'Doing create table now'
         import sqlite3
-        conn = sqlite3.connect(DBNAME)
+        conn = sqlite3.connect(dbname)
         c = conn.cursor()
         c.execute('''CREATE TABLE pastes (id VARCHAR(8) UNIQUE, ip VARCHAR(15), created VARCHAR(26), content TEXT);''')
         conn.commit()
         conn.close()
 
-    install(SQLitePlugin(dbfile=DBNAME))
+    print 'Starting pasterd v%s' % VERSION
+
+    install(SQLitePlugin(dbfile=dbname))
     run(host=host, port=port, reloader=args.reload)
 
+
+if '__main__' == __name__:
+    main()
