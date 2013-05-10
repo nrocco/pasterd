@@ -22,7 +22,7 @@ behind a proxy server such as `nginx` or `apache`.
 
 You can install `pasterd` using pip
 
-    $ pip install -e git+https://github.com/nrocco/pasterd#egg=pasterd-dev
+    $ pip install https://github.com/nrocco/pasterd/archive/master.zip#egg=pasterd-dev
 
 
 This will install a program `pasterd`
