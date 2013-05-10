@@ -18,10 +18,10 @@ setup(
     install_requires = [
         'bottle',
         'bottle-sqlite',
-        'pycli'
+        'pycli_tools'
     ],
     dependency_links = [
-        'https://github.com/nrocco/pycli-tools/tarball/master#egg=pycli'
+        'https://github.com/nrocco/pycli-tools/tarball/master#egg=pycli_tools-dev'
     ],
     entry_points = {
         'console_scripts': [
