@@ -1,7 +1,7 @@
 pasterd
 =======
 
-A shameless clone of sprung minus the google-app-engine for use in private
+A shameless clone of sprunge minus the google-app-engine for use in private
 networks.
 Handy for work if you need to share code or configuration snippets with
 collegues.
