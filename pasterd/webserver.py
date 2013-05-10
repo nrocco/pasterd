@@ -105,12 +105,10 @@ def show_paste(db, paste_id):
 #
 
 def main():
-    import sys
     import os
-    import pycli
-    from argparse import ArgumentParser
+    from pycli_tools import get_argparser
 
-    parser = pycli.get_argparser(prog='pasterd', version=VERSION,
+    parser = get_argparser(prog='pasterd', version=VERSION,
                                  default_config='~/.pasterdrc',
                                  description='Command line paste bin utility')
     parser.add_argument('-b', '--bind', metavar='address:port',
