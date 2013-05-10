@@ -123,8 +123,6 @@ def main():
                         help='location to the pastes sqlite database')
     args = parser.parse_args()
 
-    print args; sys.exit(5)
-
     parts = args.bind.split(':')
     host = parts[0]
     port = parts[1] if len(parts) > 1 else 8000
