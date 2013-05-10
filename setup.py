@@ -17,11 +17,15 @@ setup(
     include_package_data = True,
     install_requires = [
         'bottle',
-        'bottle-sqlite'
+        'bottle-sqlite',
+        'pycli'
+    ],
+    dependency_links = [
+        'https://github.com/nrocco/pycli-tools/tarball/master#egg=pycli'
     ],
     entry_points = {
         'console_scripts': [
-            'pasterd = pasterd:main'
+            'pasterd = pasterd.webserver:main'
         ]
     },
     classifiers = [
