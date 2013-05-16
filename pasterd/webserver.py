@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import random
 from datetime import datetime
 
@@ -38,12 +39,12 @@ def respond_in_plaintext(fn):
 
 @route('/ip', method='GET', apply=[respond_in_plaintext, catch_exceptions])
 def ip():
-    return '%s\n' % request.get('REMOTE_ADDR')
+    return u'%s\n' % request.get('REMOTE_ADDR')
 
 
 @route('/robots.txt', method='GET', apply=[respond_in_plaintext])
 def robots():
-    return 'User-agent: *\nDisallow: /'
+    return u'User-agent: *\nDisallow: /'
 
 
 @route('/', method='GET', apply=[respond_in_plaintext, catch_exceptions])
@@ -53,6 +54,7 @@ def index():
 
 @route('/', method='POST', apply=[respond_in_plaintext, catch_exceptions])
 def make_paste(db):
+    db.text_factory = str
     paste = request.params.get(ARG)
 
     if not paste:
@@ -62,7 +64,7 @@ def make_paste(db):
     now = datetime.now()
     paste_id = generate_rand()
 
-    c = db.execute('INSERT INTO pastes VALUES (?,?,?,?)',
+    c = db.execute(u'INSERT INTO pastes VALUES (?,?,?,?)',
                    (paste_id, ip, now, paste))
     db.commit()
 
@@ -71,7 +73,7 @@ def make_paste(db):
 
 @route('/:paste_id', method='GET', apply=[respond_in_plaintext, catch_exceptions])
 def show_paste(db, paste_id):
-    c = db.execute('SELECT content FROM pastes WHERE id = ?', (paste_id,))
+    c = db.execute(u'SELECT content FROM pastes WHERE id = ?', (paste_id,))
     paste = c.fetchone()
 
     if not paste:
