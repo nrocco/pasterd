@@ -106,7 +106,7 @@ def show_paste(db, paste_id):
 
 def main():
     import os
-    from pycli_tools import get_argparser
+    from pycli_tools.parsers import get_argparser
 
     parser = get_argparser(prog='pasterd', version=VERSION,
                                  default_config='~/.pasterdrc',
