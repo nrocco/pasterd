@@ -39,7 +39,7 @@ bump: $(PY)
 
 
 # Push to github but run tests first
-push: test
+push:
 	git push origin HEAD
 	git push origin --tags
 
