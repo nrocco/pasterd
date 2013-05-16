@@ -4,23 +4,7 @@ from datetime import datetime
 from bottle import route, run, response, request, install
 from bottle_sqlite import SQLitePlugin
 
-from pasterd import VERSION
-
-
-USAGE = '''
-pasterd                                             v %s
-
-NAME
-    pasterd - command line paste bin utility
-
-
-SYNOPSIS
-    <command> | curl -F '%s=<-' %s
-
-
-DESCRIPTION
-    Create a paste:
-'''
+from pasterd import __version__, __usage__
 
 
 
@@ -64,8 +48,7 @@ def robots():
 
 @route('/', method='GET', apply=[respond_in_plaintext, catch_exceptions])
 def index():
-    return USAGE % (VERSION, ARG, URL)
-
+    return __usage__ % (__version__, ARG, URL)
 
 
 @route('/', method='POST', apply=[respond_in_plaintext, catch_exceptions])
@@ -86,7 +69,6 @@ def make_paste(db):
     return '%s/%s\n' % (URL, paste_id)
 
 
-
 @route('/:paste_id', method='GET', apply=[respond_in_plaintext, catch_exceptions])
 def show_paste(db, paste_id):
     c = db.execute('SELECT content FROM pastes WHERE id = ?', (paste_id,))
@@ -104,43 +86,10 @@ def show_paste(db, paste_id):
 ##############################################################################
 #
 
-def main():
-    import os
-    from pycli_tools.parsers import get_argparser
 
-    parser = get_argparser(prog='pasterd', version=VERSION,
-                                 default_config='~/.pasterdrc',
-                                 description='Command line paste bin utility')
-    parser.add_argument('-b', '--bind', metavar='address:port',
-                        default='0.0.0.0:8000', help='Inet socket to bind to')
-    parser.add_argument('-u', '--base-url', metavar='http://address:port',
-                        help='The base url of this server')
-    parser.add_argument('-r', '--reload',
-                        action='store_true', help="Auto respawn server")
-    parser.add_argument('-d', '--database', default='pastes.sqlite',
-                        help='location to the pastes sqlite database')
-    args = parser.parse_args()
-
-    parts = args.bind.split(':')
-    host = parts[0]
-    port = parts[1] if len(parts) > 1 else 8000
-
-    global URL
-    URL = args.base_url or 'http://%s:%s' % (host, port)
-
-    global ARG
-    ARG = 'p'
-
-    if not os.path.isfile(args.database):
-        print 'Doing create table now'
-        import sqlite3
-        conn = sqlite3.connect(args.database)
-        c = conn.cursor()
-        c.execute('''CREATE TABLE pastes (id VARCHAR(8) UNIQUE, ip VARCHAR(15), created VARCHAR(26), content TEXT);''')
-        conn.commit()
-        conn.close()
-
-    print 'Starting pasterd v%s' % VERSION
-
-    install(SQLitePlugin(dbfile=args.database))
-    run(host=host, port=port, reloader=args.reload)
+def run_server(host, port, database, base_url, arg='p', reloader=False):
+    global URL, ARG
+    URL = base_url
+    ARG = arg
+    install(SQLitePlugin(dbfile=database))
+    run(host=host, port=port, reloader=reloader)

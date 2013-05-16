@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 from setuptools import setup
 
-from pasterd import VERSION
+from pasterd import __version__
 
 setup(
     name = 'pasterd',
-    version = VERSION,
+    version = __version__,
     packages = [
         'pasterd'
     ],
@@ -22,7 +22,7 @@ setup(
     ],
     entry_points = {
         'console_scripts': [
-            'pasterd = pasterd.webserver:main'
+            'pasterd = pasterd.main:main'
         ]
     },
     classifiers = [
