@@ -2,6 +2,8 @@ VIRTUAL_ENV ?= $(PWD)/env
 
 PY = $(VIRTUAL_ENV)/bin/python
 PIP = $(VIRTUAL_ENV)/bin/pip
+NOSE = $(VIRTUAL_ENV)/bin/nosetests
+COVERAGE = $(VIRTUAL_ENV)/bin/coverage
 
 current_version = $(shell $(PY) setup.py --version)
 package_name = $(shell $(PY) setup.py --name)
@@ -13,6 +15,15 @@ $(PY):
 	virtualenv env
 	$(eval VIRTUAL_ENV = $(PWD)/env)
 
+# Install dependencies need for testing
+$(NOSE): $(PY)
+	$(PIP) install nose
+	$(PIP) install WebTest
+
+# Install the coverage module
+$(COVERAGE): $(PY)
+	$(PIP) install coverage
+
 
 # Prepare the environment for development
 .PHONY: develop
@@ -20,10 +31,22 @@ develop: $(PY) deps
 	$(PY) setup.py develop
 
 
+#
 # install development dependencies
 .PHONY: deps
 deps: $(PY)
 	if [ -f requirements.txt ]; then $(PIP) install -r requirements.txt; fi
+
+
+# run all tests with nosetests
+.PHONY: test
+test: $(PY) deps $(NOSE)
+	$(NOSE)
+
+
+.PHONY: coverage
+coverage: $(PY) deps $(NOSE) $(COVERAGE)
+	$(NOSE) --with-coverage --cover-package=$(package_name)
 
 
 # bump the version number
@@ -49,7 +72,7 @@ pull:
 
 # Push to github but run tests first
 .PHONY: push
-push:
+push: test
 	git push origin HEAD
 	git push origin --tags
 

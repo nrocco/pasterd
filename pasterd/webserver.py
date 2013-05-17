@@ -1,12 +1,19 @@
 # -*- coding: utf-8 -*-
+import logging
+import os
 import random
 from datetime import datetime
 
-from bottle import route, run, response, request, install
+import bottle
 from bottle_sqlite import SQLitePlugin
 
 from pasterd import __version__, __usage__
 
+
+
+log = logging.getLogger(__name__)
+VAR = 'p'
+URL = 'http://0.0.0.0'
 
 
 def generate_rand(size=8):
@@ -19,14 +26,14 @@ def catch_exceptions(fn):
         try:
             return fn(*args, **kwargs)
         except Exception as e:
-            response.status= 400
+            bottle.response.status= 400
             return '%s: %s\n' % (type(e).__name__, str(e))
     return wrapper
 
 
 def respond_in_plaintext(fn):
     def wrapper(*args, **kwargs):
-        response.content_type = 'text/plain; charset="UTF-8"'
+        bottle.response.content_type = 'text/plain; charset="UTF-8"'
         return fn(*args, **kwargs)
     return wrapper
 
@@ -37,30 +44,30 @@ def respond_in_plaintext(fn):
 #
 
 
-@route('/ip', method='GET', apply=[respond_in_plaintext, catch_exceptions])
+@bottle.route('/ip', method='GET', apply=[respond_in_plaintext, catch_exceptions])
 def ip():
-    return u'%s\n' % request.get('REMOTE_ADDR')
+    return '%s\n' % bottle.request.get('REMOTE_ADDR')
 
 
-@route('/robots.txt', method='GET', apply=[respond_in_plaintext])
+@bottle.route('/robots.txt', method='GET', apply=[respond_in_plaintext])
 def robots():
-    return u'User-agent: *\nDisallow: /'
+    return 'User-agent: *\nDisallow: /'
 
 
-@route('/', method='GET', apply=[respond_in_plaintext, catch_exceptions])
+@bottle.route('/', method='GET', apply=[respond_in_plaintext, catch_exceptions])
 def index():
-    return __usage__ % (__version__, ARG, URL)
+    return __usage__ % (__version__, VAR, URL)
 
 
-@route('/', method='POST', apply=[respond_in_plaintext, catch_exceptions])
+@bottle.route('/', method='POST', apply=[respond_in_plaintext, catch_exceptions])
 def make_paste(db):
     db.text_factory = str
-    paste = request.params.get(ARG)
+    paste = bottle.request.params.get(VAR)
 
     if not paste:
-        raise Exception('Usage: send %s POST variable' % ARG)
+        raise Exception('Usage: send %s POST variable' % VAR)
 
-    ip = request.get('REMOTE_ADDR')
+    ip = bottle.request.get('REMOTE_ADDR')
     now = datetime.now()
     paste_id = generate_rand()
 
@@ -71,13 +78,13 @@ def make_paste(db):
     return '%s/%s\n' % (URL, paste_id)
 
 
-@route('/:paste_id', method='GET', apply=[respond_in_plaintext, catch_exceptions])
+@bottle.route('/:paste_id', method='GET', apply=[respond_in_plaintext, catch_exceptions])
 def show_paste(db, paste_id):
     c = db.execute(u'SELECT content FROM pastes WHERE id = ?', (paste_id,))
     paste = c.fetchone()
 
     if not paste:
-        response.status= 404
+        bottle.response.status= 404
         return 'Paste %s does not exist' % paste_id
 
     return '%s' % paste['content']
@@ -89,9 +96,21 @@ def show_paste(db, paste_id):
 #
 
 
-def run_server(host, port, database, base_url, arg='p', reloader=False):
-    global URL, ARG
+def setup(db, base_url=URL, paste_variable=VAR):
+    global URL, VAR
     URL = base_url
-    ARG = arg
-    install(SQLitePlugin(dbfile=database))
-    run(host=host, port=port, reloader=reloader)
+    VAR = paste_variable
+
+    log.warn('Using sqlite database in %s', db)
+    if not os.path.isfile(db):
+        import sqlite3
+        conn = sqlite3.connect(db)
+        c = conn.cursor()
+        c.execute('''CREATE TABLE IF NOT EXISTS pastes (id VARCHAR(8) UNIQUE, ip VARCHAR(15), created VARCHAR(26), content TEXT);''')
+        conn.commit()
+        conn.close()
+    bottle.install(SQLitePlugin(dbfile=db))
+
+
+def run(host, port, reloader):
+    return bottle.run(host=host, port=port, reloader=reloader)

@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
-
 import logging
 
 
 
 log = logging.getLogger(__name__)
 
-def main():
-    import os
-    from pycli_tools.parsers import get_argparser
 
-    from pasterd import __version__
-    from pasterd.webserver import run_server
+def main():
+    from pycli_tools.parsers import get_argparser
+    from pasterd import webserver, __version__
 
     parser = get_argparser(prog='pasterd', version=__version__,
                                  default_config='~/.pasterdrc',
@@ -22,8 +19,9 @@ def main():
                         help='The base url of this server')
     parser.add_argument('-r', '--reload',
                         action='store_true', help="Auto respawn server")
-    parser.add_argument('-d', '--database', default='pastes.sqlite',
+    parser.add_argument('-d', '--database', default='/tmp/pastes.sqlite',
                         help='location to the pastes sqlite database')
+    parser.add_argument('-p', '--paste-variable', default='p')
     args = parser.parse_args()
 
     parts = args.bind.split(':')
@@ -31,16 +29,6 @@ def main():
     port = parts[1] if len(parts) > 1 else 8000
     base_url = args.base_url or 'http://%s:%s' % (host, port)
 
-    if not os.path.isfile(args.database):
-        log.warn('Doing create table now')
-        import sqlite3
-        conn = sqlite3.connect(args.database)
-        c = conn.cursor()
-        c.execute('''CREATE TABLE pastes (id VARCHAR(8) UNIQUE, ip VARCHAR(15), created VARCHAR(26), content TEXT);''')
-        conn.commit()
-        conn.close()
-
     log.warn('Starting pasterd v%s', __version__)
-
-    run_server(host=host, port=port, reloader=args.reload,
-               database=args.database, arg='p', base_url=base_url)
+    webserver.setup(args.database, base_url, args.paste_variable)
+    webserver.run(host=host, port=port, reloader=args.reload)
