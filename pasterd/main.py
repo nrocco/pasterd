@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
+
+
+log = logging.getLogger(__name__)
 
 def main():
     import os
@@ -27,7 +32,7 @@ def main():
     base_url = args.base_url or 'http://%s:%s' % (host, port)
 
     if not os.path.isfile(args.database):
-        print 'Doing create table now'
+        log.warn('Doing create table now')
         import sqlite3
         conn = sqlite3.connect(args.database)
         c = conn.cursor()
@@ -35,7 +40,7 @@ def main():
         conn.commit()
         conn.close()
 
-    print 'Starting pasterd v%s' % parser.version
+    log.warn('Starting pasterd v%s', __version__)
 
     run_server(host=host, port=port, reloader=args.reload,
                database=args.database, arg='p', base_url=base_url)
