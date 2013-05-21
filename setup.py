@@ -14,6 +14,7 @@ setup(
     author_email = 'dirocco.nico@gmail.com',
     description = 'A collection of command line scripts written '
                   'in Python for mutt (and davmail)',
+    long_description = open('README.rst').read(),
     include_package_data = True,
     install_requires = [
         'bottle',

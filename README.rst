@@ -20,12 +20,12 @@ You only need to download, install and run `pasterd` on the server side.
 Typically you run `pasterd` like any other bottle.py app; on `127.0.0.1`
 behind a proxy server such as `nginx` or `apache`.
 
-You can install `pasterd` using pip
+You can install `pasterd` using pip::
 
     $ pip install https://github.com/nrocco/pasterd/archive/master.zip#egg=pasterd-dev
 
 
-This will install a program `pasterd`
+This will install a program `pasterd`::
 
     $ pasterd --help
     usage: pasterd [-h] [-V] [-b address:port] [-u http://address:port] [-r]
@@ -42,7 +42,7 @@ This will install a program `pasterd`
       -r, --reload          Auto respawn server
 
 
-Start a new instance of `pasterd`:
+Start a new instance of `pasterd`::
 
     $ pasterd -b 127.0.0.1:8000 -u http://pasterd.local
 
@@ -60,18 +60,16 @@ usage
 After having installed `pasterd` on the server side from any client you can
 use e.g. `curl` to send GET and POST requests to `pasterd`.
 
-To get information on how to use `pasterd` from the client point of view do:
+To get information on how to use `pasterd` from the client point of view do::
 
     $ curl http://pasterd.local
 
 
-To create a paste execute some command and pipe it to curl
+To create a paste execute some command and pipe it to curl::
 
     $ <command> | curl -F 'p=<-' http://pasterd.local
 
 
-For example
+For example::
 
     $ cat ~/.vimrc | curl -F 'p=<-' http://pasterd.local
-
-
