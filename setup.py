@@ -17,9 +17,9 @@ setup(
     long_description = open('README.rst').read(),
     include_package_data = True,
     install_requires = [
-        'bottle',
-        'bottle-sqlite',
-        'pycli_tools>=1.3'
+        'bottle==0.11.6',
+        'bottle-sqlite==0.1.2',
+        'pycli-tools==1.5'
     ],
     entry_points = {
         'console_scripts': [
