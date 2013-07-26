@@ -10,4 +10,7 @@ notifications:
     on_success: always
     on_failure: always
 
+install:
+  - "pip install WebTest"
+
 script: make test
