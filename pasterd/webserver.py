@@ -71,7 +71,7 @@ def make_paste(db):
     now = datetime.now()
     paste_id = generate_rand()
 
-    c = db.execute(u'INSERT INTO pastes VALUES (?,?,?,?)',
+    c = db.execute('INSERT INTO pastes VALUES (?,?,?,?)',
                    (paste_id, ip, now, paste))
     db.commit()
 
@@ -80,7 +80,7 @@ def make_paste(db):
 
 @bottle.route('/:paste_id', method='GET', apply=[respond_in_plaintext, catch_exceptions])
 def show_paste(db, paste_id):
-    c = db.execute(u'SELECT content FROM pastes WHERE id = ?', (paste_id,))
+    c = db.execute('SELECT content FROM pastes WHERE id = ?', (paste_id,))
     paste = c.fetchone()
 
     if not paste:

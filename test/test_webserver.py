@@ -63,19 +63,19 @@ def test_make_paste():
     assert resp.content_type == 'text/plain'
     assert resp.content_length > 0
 
-    paste_url = resp.body.replace(webserver.URL, '').strip()
+    paste_url = resp.body.decode("utf-8").replace(webserver.URL, '').strip()
     resp2 = app.get(paste_url)
     assert resp.status == '200 OK'
     assert resp.status_int == 200
     assert resp.content_type == 'text/plain'
     assert resp.content_length > 0
-    assert resp2.body == 'this is a test paste'
+    assert resp2.body.decode("utf-8") == 'this is a test paste'
 
 
 def test_use_wrong_paste_variable_gives_400():
     app = TestApp(bottle.app())
     resp = app.post('/', {'b': 'this is a test paste'}, status=400)
-    assert 'Usage: send p POST variable' in resp.body
+    assert 'Usage: send p POST variable' in resp.body.decode("utf-8")
     assert resp.status == '400 Bad Request'
     assert resp.status_int == 400
     assert resp.content_type == 'text/plain'
