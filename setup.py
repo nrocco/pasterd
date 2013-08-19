@@ -19,7 +19,7 @@ setup(
     install_requires = [
         'bottle==0.11.6',
         'bottle-sqlite==0.1.2',
-        'pycli-tools==1.5'
+        'pycli-tools>=1.6.0',
     ],
     entry_points = {
         'console_scripts': [
