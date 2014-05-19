@@ -4,7 +4,7 @@ import os
 import random
 import base64
 
-from mimetypes import MimeTypes
+from subprocess import check_output
 from datetime import datetime
 
 import bottle
@@ -68,14 +68,9 @@ def make_paste(db):
 
     if VAR in bottle.request.files:
         upload = bottle.request.files.get(VAR)
-        name, ext = os.path.splitext(upload.filename)
-
-        if ext not in ('.png','.jpg','.jpeg'):
-            raise Exception('File extension not allowed.')
-
-        mime = MimeTypes()
-        mime_type = mime.guess_type(upload.filename)
-        content_type = mime_type[0]
+        mime = check_output(['/usr/bin/file', '--brief', '--mime-type', '-'],
+                            stdin=upload.file)
+        content_type = mime.strip()
         paste = base64.b64encode(upload.file.read())
     elif VAR in bottle.request.params:
         content_type = "text/plain"
