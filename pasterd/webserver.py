@@ -70,6 +70,7 @@ def make_paste(db):
         upload = bottle.request.files.get(VAR)
         mime = check_output(['/usr/bin/file', '--brief', '--mime-type', '-'],
                             stdin=upload.file)
+        upload.file.seek(0)
         content_type = mime.strip()
         paste = base64.b64encode(upload.file.read())
     elif VAR in bottle.request.params:
