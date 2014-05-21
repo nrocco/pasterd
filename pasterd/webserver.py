@@ -29,6 +29,7 @@ def catch_exceptions(fn):
         try:
             return fn(*args, **kwargs)
         except Exception as e:
+            bottle.response.content_type = "text/plain"
             bottle.response.status= 400
             return '%s: %s\n' % (type(e).__name__, str(e))
     return wrapper
@@ -96,6 +97,7 @@ def show_paste(db, paste_id):
     paste = c.fetchone()
 
     if not paste:
+        bottle.response.content_type = "text/plain"
         bottle.response.status= 404
         return 'Paste %s does not exist' % paste_id
 
