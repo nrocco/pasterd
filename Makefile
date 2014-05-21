@@ -22,8 +22,7 @@ $(SPHINXBUILD): $(PY)
 
 # Install dependencies need for testing
 $(NOSE): $(PY)
-	$(PIP) install nose
-	$(PIP) install WebTest
+	$(PIP) install nose mock WebTest
 
 # Install the coverage module
 $(COVERAGE): $(PY)
