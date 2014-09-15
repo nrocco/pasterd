@@ -1,6 +1,9 @@
 pasterd
 =======
 
+.. image:: https://travis-ci.org/nrocco/pasterd.svg?branch=image-support
+    :target: https://travis-ci.org/nrocco/pasterd
+
 A shameless clone of sprunge minus the google-app-engine for use in private
 networks.
 Handy for work if you need to share code or configuration snippets with
