@@ -1,25 +1,47 @@
-#!/usr/bin/env python
-from setuptools import setup
+# -*- coding: utf-8 -*-
+import re
+import codecs
 
-from pasterd import __version__
+from setuptools import setup
+from setuptools.command.test import test as TestCommand
+
+
+class NoseTestCommand(TestCommand):
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+
+    def run_tests(self):
+        # Run nose ensuring that argv simulates running nosetests directly
+        import nose
+        nose.run_exit(argv=['nosetests'])
+
 
 setup(
     name = 'pasterd',
-    version = __version__,
+    description = 'A collection of command line scripts written in Python for mutt (and davmail)',
+    version = re.search(r'''^__version__\s*=\s*["'](.*)["']''', open('pasterd/__init__.py').read(), re.M).group(1),
+    author = 'Nico Di Rocco',
+    author_email = 'dirocco.nico@gmail.com',
+    url = 'http://github.com/nrocco/pasterd',
+    license = 'GPLv3',
+    long_description = codecs.open('README.rst', 'rb', 'utf-8').read(),
+    test_suite='nose.collector',
+    tests_require = [
+        'nose',
+        'webtest',
+        'mock',
+        'coverage',
+    ],
     packages = [
         'pasterd'
     ],
-    url = 'http://nrocco.github.io/',
-    author = 'Nico Di Rocco',
-    author_email = 'dirocco.nico@gmail.com',
-    description = 'A collection of command line scripts written '
-                  'in Python for mutt (and davmail)',
-    long_description = open('README.rst').read(),
     include_package_data = True,
     install_requires = [
-        'bottle==0.11.6',
-        'bottle-sqlite==0.1.2',
-        'pycli-tools>=1.6.0',
+        'bottle>=0.12',
+        'bottle-sqlite>=0.1.2',
+        'pycli-tools>=2.0.1'
     ],
     entry_points = {
         'console_scripts': [
@@ -27,12 +49,18 @@ setup(
         ]
     },
     classifiers = [
+        'Development Status :: 5 - Production/Stable',
         'Operating System :: OS Independent',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'Operating System :: Unix',
+        'Programming Language :: Python',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
         'Topic :: Internet :: WWW/HTTP',
-        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Utilities'
     ],
-    test_suite = 'nose.collector',
+    cmdclass = {
+        'test': NoseTestCommand
+    }
 )

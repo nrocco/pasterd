@@ -1,0 +1,7 @@
+--exclude=*.egg
+--exclude=.git
+--exclude=.svn
+--languages=python
+--python-kinds=-i
+--recurse
+--totals=yes

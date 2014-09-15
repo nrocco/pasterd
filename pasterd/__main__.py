@@ -2,7 +2,6 @@
 import logging
 
 
-
 log = logging.getLogger(__name__)
 
 
@@ -32,3 +31,7 @@ def main():
     log.warn('Starting pasterd v%s', __version__)
     webserver.setup(args.database, base_url, args.paste_variable)
     webserver.run(host=host, port=port, reloader=args.reload)
+
+
+if '__main__' == __name__:
+    main()
